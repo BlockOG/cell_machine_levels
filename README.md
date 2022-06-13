@@ -1,3 +1,3 @@
 # Cell Machine Levels
 
-A library for manipulating mystic mod cell machine levels (codes).
+A library for manipulating modded cell machine level codes.
