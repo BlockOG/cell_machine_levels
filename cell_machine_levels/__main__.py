@@ -1,4 +1,4 @@
-import __init__ as cell_machine_levels
+import cell_machine_levels
 
 choices = [
     [
@@ -14,8 +14,8 @@ choices = [
     [
         [
             lambda: 0,
-            lambda: print(cell_machine_levels.b74_encode(int(input("Number: ")))) or 1,
-            lambda: print(cell_machine_levels.b74_decode(input("Base 74: "))) or 1,
+            lambda: print(cell_machine_levels.base74.b74_encode(int(input("Number: ")))) or 1,
+            lambda: print(cell_machine_levels.base74.b74_decode(input("Base 74: "))) or 1,
         ],
         [
             "Go Back",
