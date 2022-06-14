@@ -1,31 +1,40 @@
-"""The level parser for V1 levels."""
+"""The level parser for V2 levels."""
 
 from .level import Level, LevelParsingError, Cell
+from .base74 import b74_decode,b74_encode
 import re
 
 
 def open(level_code: str) -> Level:
-    if re.match(
-        r"^V1;\d+;\d+;(\d\.\d,?)*;([0-8]\.[0-3]\.\d+\.\d+,?)*;[\w\d]*;[0-3]?$",
-        level_code,
-    ):
+    if "insert some regex here":
         level_list = level_code.split(";")
+        level_list[1] = b74_decode(level_list[1])
+        level_list[2] = b74_decode(level_list[2])
         level = Level(
-            int(level_list[1]),
-            int(level_list[2]),
-            level_list[5],
-            int(level_list[6]) if level_list[6] != "" else 0,
+            level_list[1],
+            level_list[2],
+            level_list[4],
+            int(level_list[5]) if level_list[5] != "" else 0,
         )
-
-        # Loop through all the placeable cells and set them to True
-        for i in level_list[3].split(","):
-            x, y = i.split(".")
-            level[int(x), int(y)] = True
-
-        # Loop through all the cells and set them
-        for i in level_list[4].split(","):
-            type, rotation, x, y = i.split(".")
-            level[int(x), int(y)] = Cell(int(type), int(rotation))
+        
+        level_list[3] += "0" # This only gets compared against in the context of being ) or (
+        
+        count = 0
+        position = 0
+        while count < len(level_list[3])-1:
+            if level_list[3][count+1] is ")":
+                repeat == b74_decode(level_list[3][count+2])
+            elif level_list[3][count+1] is "("
+                repeat == b74_decode(level_list[3][count+2:].split(")")[0])
+            else:
+                repeat = 0
+            
+            for i in range(repeat):
+                cell_num = b74_decode(level_list[3][count+i])
+                level[(count+i)%level_list[1], (count+i)//level_list[2]] = c % 2 == 1
+                level[(count+i)%level_list[1], (count+i)//level_list[2]] = Cell((cell_num//2) % 9,  [0, 3, 2, 1][c // 18])
+                
+            count += repeat
 
         return level
     else:
