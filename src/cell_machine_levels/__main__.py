@@ -32,7 +32,7 @@ while True:
     for i, j in enumerate(choices[current_menu][1]):
         print(f"{i}. {j}")
     print()
-    
+
     try:
         # Get and run choice
         choice = int(input("Enter your choice: "))
