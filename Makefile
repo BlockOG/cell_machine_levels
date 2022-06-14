@@ -1,8 +1,10 @@
 format:
 	python3 -m black .
+test:
+	python3 -m unittest tests/__main__.py
 build:
 	make format
-	python3 tests
+	make test
 	rm -rf dist/
 	python3 -m build
 	twine upload -r pypi dist/*

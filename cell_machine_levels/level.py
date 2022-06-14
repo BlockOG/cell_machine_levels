@@ -1,5 +1,6 @@
 from enum import IntEnum
 from . import _plugins
+import importlib
 
 
 class CellEnum(IntEnum):
@@ -47,6 +48,25 @@ class Cell:
     def rotate_right(self) -> None:
         self.rotation = (self.rotation + 1) % 4
 
+    def __str__(self) -> str:
+        return f"{self.type}:{self.rotation}"
+
+    __repr__ = __str__
+
+    # Comparisons
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Cell):
+            return self.type == other.type and self.rotation == other.rotation
+        elif isinstance(other, int):
+            return self.type == other
+        elif isinstance(other, tuple[int, int]) or isinstance(other, list[int, int]):
+            return self.type == other[0] and self.rotation == other[1]
+        elif isinstance(other, str):
+            return str(self) == other
+        else:
+            raise TypeError(f"Cannot compare Cell to {type(other)}")
+
 
 class Level:
     """The main class for levels. You can use this class to create levels and to parse level codes."""
@@ -64,17 +84,17 @@ class Level:
 
     def save(self, format: str, v4: bool = True) -> str:
         if format in _plugins:
-            try:
-                return __import__(f"cell_machine_levels.{format}").save(self, v4=v4)
-            except ImportError:
-                raise ValueError(
-                    f"The format {format} is not supported or doesn't exist."
-                )
+            return importlib.import_module(f".{format}", "cell_machine_levels").save(
+                self, v4=v4
+            )
+        else:
+            raise ValueError(f"The format {format} is not supported or doesn't exist.")
 
     # Iterable methods
 
-    def __iter__(self) -> None:
-        self._pos = (0, 0)
+    def __iter__(self) -> "Level":
+        self._pos = [0, 0]
+        return self
 
     def __next__(self) -> tuple[int, int, Cell, bool]:
         if self._pos[1] < self.height:
@@ -86,7 +106,7 @@ class Level:
             )
             self._pos[0] += 1
             if self._pos[0] >= self.width:
-                self._pos = 0, self._pos[1] + 1
+                self._pos = [0, self._pos[1] + 1]
             return ret
         else:
             raise StopIteration
@@ -94,13 +114,13 @@ class Level:
     # Getters and setters
 
     def __getitem__(self, pos: tuple[int, int, bool]) -> Cell:
-        if tuple[2]:
+        if pos[2]:
             return self.place_grid[pos[1]][pos[0]]
         else:
             return self.cell_grid[pos[1]][pos[0]]
 
     def __setitem__(self, pos: tuple[int, int, bool], value: Cell) -> None:
-        if tuple[2]:
+        if pos[2]:
             self.place_grid[pos[1]][pos[0]] = value
         else:
             self.cell_grid[pos[1]][pos[0]] = value
@@ -151,4 +171,6 @@ class LevelParsingError(Exception):
 def open(level_code: str, v4: bool = True) -> Level:
     for plugin in _plugins:
         if level_code.startswith(plugin + ";"):
-            return __import__(f"cell_machine_levels.{plugin}").open(level_code, v4=v4)
+            return importlib.import_module(f".{plugin}", "cell_machine_levels").open(
+                level_code, v4=v4
+            )

@@ -7,7 +7,7 @@ class TestLevel(unittest.TestCase):
         test[0, 0, True] = True
         test[0, 1, False] = cell_machine_levels.level.Cell(
             cell_machine_levels.level.CellEnum.mover,
-            cell_machine_levels.level.CellEnum.rotation.up,
+            cell_machine_levels.level.Rotations.up,
         )
         self.assertEqual(
             test, cell_machine_levels.level.open("V1;10;10;0.9;3.3.0.8;test;2")
