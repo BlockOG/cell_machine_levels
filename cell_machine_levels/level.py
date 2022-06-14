@@ -1,7 +1,9 @@
-from enum import IntEnum
-from . import _plugins
-from typing import Tuple, Union
+"""This module contains the level class and the cell class."""
+
 import importlib
+from enum import IntEnum
+from typing import Tuple, Union
+from . import _plugins
 
 
 class CellEnum(IntEnum):
@@ -39,14 +41,18 @@ class WallEffect(IntEnum):
 
 
 class Cell:
+    """The class used for cells in the Level class."""
+
     def __init__(self, type: CellEnum = 0, rotation: Rotations = 0) -> None:
         self.type = type
         self.rotation = rotation
 
     def rotate_left(self) -> None:
+        """Rotate the cell left."""
         self.rotation = (self.rotation - 1) % 4
 
     def rotate_right(self) -> None:
+        """Rotate the cell right."""
         self.rotation = (self.rotation + 1) % 4
 
     def __str__(self) -> str:
@@ -70,7 +76,8 @@ class Cell:
 
 
 class Level:
-    """The main class for levels. You can use this class to create levels and to parse level codes."""
+    """The main class for levels. You can use this class to create levels
+    and to parse level codes."""
 
     def __init__(
         self, width: int, height: int, name: str = "", wall_effect: WallEffect = 0
@@ -80,8 +87,13 @@ class Level:
         self.place_grid = [[False for _ in range(width)] for _ in range(height)]
         self.name = name
         self.wall_effect = wall_effect
+        self._pos = None  # Cause pylint is complaining
 
     def optimized(self) -> "Level":
+        """Optimize the level.
+
+        Returns:
+            Level: The optimized level."""
         result = Level(self.width, self.height, self.name, self.wall_effect)
 
         for x, y, cell, place in self:
@@ -104,11 +116,19 @@ class Level:
         return result
 
     def optimize(self) -> None:
-        self = self.optimized()
+        """Optimize this level without returning anything."""
+        self.cell_grid = self.optimized().cell_grid
 
     # Saving the level
 
     def save(self, format: str) -> str:
+        """Save the level to a level code of the given format.
+
+        Args:
+            format (str): The format to save the level in.
+
+        Returns:
+            str: The level code."""
         if format in _plugins:
             return importlib.import_module(f".{format}", "cell_machine_levels").save(
                 self
@@ -155,14 +175,17 @@ class Level:
 
     @property
     def size(self):
+        """Tuple[int, int]: The size of the level."""
         return self._size
 
     @property
     def width(self):
+        """int: The width of the level."""
         return self._size[0]
 
     @property
     def height(self):
+        """int: The height of the level."""
         return self._size[1]
 
     # Comparisons
@@ -178,10 +201,11 @@ class Level:
         elif isinstance(other, str):
             try:
                 return self.save(other.split(";")[0]) == other
-            except ValueError:
+            except ValueError as ex:
+                form = other.split(";")[0]
                 raise ValueError(
-                    f"The format {f[:10] + '...' if len(f := other.split(';')[0]) > 10 else f} is not supported or doesn't exist."
-                )
+                    f"The format {form[:10] + '...' if len(form) > 10 else form} is not supported or doesn't exist."
+                ) from ex
         elif isinstance(other, list):
             return self.cell_grid == other
         else:
@@ -189,10 +213,17 @@ class Level:
 
 
 class LevelParsingError(Exception):
-    pass
+    """Exception raised when parsing a level fails."""
 
 
 def open(level_code: str) -> Level:
+    """Open a level from a level code.
+
+    Args:
+        level_code (str): The level code.
+
+    Returns:
+        Level: The level."""
     for plugin in _plugins:
         if level_code.startswith(plugin + ";"):
             return importlib.import_module(f".{plugin}", "cell_machine_levels").open(
