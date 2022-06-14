@@ -1,10 +1,11 @@
 """The level parser for V1 levels."""
 
-from .level import Level, LevelParsingError, Cell
 import re
+from .level import Level, LevelParsingError, Cell
 
 
 def open(level_code: str) -> Level:
+    """Use level.open, that's how to open a level."""
     if re.match(
         r"^V1;\d+;\d+;(\d\.\d,?)*;([0-8]\.[0-3]\.\d+\.\d+,?)*;[\w\d]*;[0-3]?$",
         level_code,
@@ -33,6 +34,7 @@ def open(level_code: str) -> Level:
 
 
 def save(level: Level) -> str:
+    """Use level.Level.save, that's how to save a level."""
     # Loop through the level and save it to 2 lists which are used in the V1 level code
     placeable = []
     cells = []

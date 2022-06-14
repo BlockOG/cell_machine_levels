@@ -1,3 +1,5 @@
+"""This module is used in V2 and V3 encoding, maybe some others too."""
+
 b74_key = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&+-.=?^{}"
 
 
@@ -14,10 +16,10 @@ def b74_decode(chars: str, /) -> int:
 
     for char in chars:
         result *= 74
-        if (c := b74_key.find(char)) == -1:
+        if (b74_char := b74_key.find(char)) == -1:
             raise ValueError(f"Invalid character in base 74 number: {char}")
         else:
-            result = result + c
+            result = result + b74_char
 
     return result
 

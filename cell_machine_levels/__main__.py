@@ -1,3 +1,5 @@
+"""CLI for cell_machine_levels."""
+
 import cell_machine_levels
 
 choices = [
