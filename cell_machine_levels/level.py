@@ -1,5 +1,6 @@
 from enum import IntEnum
 from . import _plugins
+from typing import Tuple, Union
 import importlib
 
 
@@ -92,13 +93,13 @@ class Level:
                 CellEnum.spinner_left,
                 CellEnum.spinner_right,
             ):
-                result[x, y, False] = Cell(cell.type, 0)
+                result[x, y] = Cell(cell.type, 0)
             elif cell.type == CellEnum.slide:
-                result[x, y, False] = Cell(cell.type, cell.rotation % 2)
+                result[x, y] = Cell(cell.type, cell.rotation % 2)
             else:
-                result[x, y, False] = cell
+                result[x, y] = cell
 
-            result[x, y, True] = place
+            result[x, y] = place
 
         return result
 
@@ -121,7 +122,7 @@ class Level:
         self._pos = [0, 0]
         return self
 
-    def __next__(self) -> tuple[int, int, Cell, bool]:
+    def __next__(self) -> Tuple[int, int, Cell, bool]:
         if self._pos[1] < self.height:
             ret = (
                 self._pos[0],
@@ -138,14 +139,14 @@ class Level:
 
     # Getters and setters
 
-    def __getitem__(self, pos: tuple[int, int, bool]):
+    def __getitem__(self, pos: Tuple[int, int, bool]) -> Union[Cell, bool]:
         if pos[2]:
             return self.place_grid[pos[1]][pos[0]]
         else:
             return self.cell_grid[pos[1]][pos[0]]
 
-    def __setitem__(self, pos: tuple[int, int, bool], value) -> None:
-        if pos[2]:
+    def __setitem__(self, pos: Tuple[int, int], value: Union[Cell, bool]) -> None:
+        if isinstance(value, bool):
             self.place_grid[pos[1]][pos[0]] = value
         else:
             self.cell_grid[pos[1]][pos[0]] = value

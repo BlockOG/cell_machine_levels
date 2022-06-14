@@ -20,12 +20,12 @@ def open(level_code: str) -> Level:
         # Loop through all the placeable cells and set them to True
         for i in level_list[3].split(","):
             x, y = i.split(".")
-            level[int(x), int(y), True] = True
+            level[int(x), int(y)] = True
 
         # Loop through all the cells and set them
         for i in level_list[4].split(","):
             type, rotation, x, y = i.split(".")
-            level[int(x), int(y), False] = Cell(
+            level[int(x), int(y)] = Cell(
                 int(type), int(rotation)
             )
 
