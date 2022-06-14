@@ -20,12 +20,12 @@ def open(level_code: str) -> Level:
         # Loop through all the placeable cells and set them to True
         for i in level_list[3].split(","):
             x, y = i.split(".")
-            level[int(x), level.height - int(y) - 1, True] = True
+            level[int(x), int(y), True] = True
 
         # Loop through all the cells and set them
         for i in level_list[4].split(","):
             type, rotation, x, y = i.split(".")
-            level[int(x), level.height - int(y) - 1, False] = Cell(
+            level[int(x), int(y), False] = Cell(
                 int(type), int(rotation)
             )
 
@@ -40,11 +40,11 @@ def save(level: Level) -> str:
     cells = []
     for x, y, cell, place in level:
         if place:
-            placeable.append(f"{x}.{level.height - y - 1}")
+            placeable.append(f"{x}.{y}")
 
         if cell.type != 0:
             cells.append(
-                f"{int(cell.type)}.{int(cell.rotation)}.{x}.{level.height - y - 1}"
+                f"{int(cell.type)}.{int(cell.rotation)}.{x}.{y}"
             )
 
     return f"V1;{level.width};{level.height};{';'.join(placeable)};{';'.join(cells)};{level.name};{int(level.wall_effect)}"
