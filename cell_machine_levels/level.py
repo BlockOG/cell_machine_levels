@@ -60,7 +60,7 @@ class Cell:
             return self.type == other.type and self.rotation == other.rotation
         elif isinstance(other, int):
             return self.type == other
-        elif isinstance(other, tuple[int, int]) or isinstance(other, list[int, int]):
+        elif isinstance(other, tuple) or isinstance(other, list):
             return self.type == other[0] and self.rotation == other[1]
         elif isinstance(other, str):
             return str(self) == other
@@ -107,10 +107,10 @@ class Level:
 
     # Saving the level
 
-    def save(self, format: str, v4: bool = True) -> str:
+    def save(self, format: str) -> str:
         if format in _plugins:
             return importlib.import_module(f".{format}", "cell_machine_levels").save(
-                self, v4=v4
+                self
             )
         else:
             raise ValueError(f"The format {format} is not supported or doesn't exist.")
@@ -138,13 +138,13 @@ class Level:
 
     # Getters and setters
 
-    def __getitem__(self, pos: tuple[int, int, bool]) -> Cell:
+    def __getitem__(self, pos: tuple[int, int, bool]):
         if pos[2]:
             return self.place_grid[pos[1]][pos[0]]
         else:
             return self.cell_grid[pos[1]][pos[0]]
 
-    def __setitem__(self, pos: tuple[int, int, bool], value: Cell) -> None:
+    def __setitem__(self, pos: tuple[int, int, bool], value) -> None:
         if pos[2]:
             self.place_grid[pos[1]][pos[0]] = value
         else:
@@ -176,12 +176,10 @@ class Level:
             )
         elif isinstance(other, str):
             try:
-                return (
-                    self.save(other.split(";")[0], bool(other.split(";")[-1])) == other
-                )
+                return self.save(other.split(";")[0]) == other
             except ValueError:
                 raise ValueError(
-                    f"The format {(f := other.split(';')[0])[:10] + '...' if len(f) > 10 else f} is not supported or doesn't exist."
+                    f"The format {f[:10] + '...' if len(f := other.split(';')[0]) > 10 else f} is not supported or doesn't exist."
                 )
         elif isinstance(other, list):
             return self.cell_grid == other
@@ -193,9 +191,12 @@ class LevelParsingError(Exception):
     pass
 
 
-def open(level_code: str, v4: bool = True) -> Level:
+def open(level_code: str) -> Level:
     for plugin in _plugins:
         if level_code.startswith(plugin + ";"):
             return importlib.import_module(f".{plugin}", "cell_machine_levels").open(
-                level_code, v4=v4
+                level_code
             )
+    raise LevelParsingError(
+        f"The format {level_code.split(';')[0]} is not supported or doesn't exist."
+    )
