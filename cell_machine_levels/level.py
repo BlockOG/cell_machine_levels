@@ -80,6 +80,31 @@ class Level:
         self.name = name
         self.wall_effect = wall_effect
 
+    def optimized(self) -> "Level":
+        result = Level(self.width, self.height, self.name, self.wall_effect)
+
+        for x, y, cell, place in self:
+            if cell.type in (
+                CellEnum.enemy,
+                CellEnum.immobile,
+                CellEnum.push,
+                CellEnum.trash,
+                CellEnum.spinner_left,
+                CellEnum.spinner_right,
+            ):
+                result[x, y, False] = Cell(cell.type, 0)
+            elif cell.type == CellEnum.slide:
+                result[x, y, False] = Cell(cell.type, cell.rotation % 2)
+            else:
+                result[x, y, False] = cell
+
+            result[x, y, True] = place
+
+        return result
+
+    def optimize(self) -> None:
+        self = self.optimized()
+
     # Saving the level
 
     def save(self, format: str, v4: bool = True) -> str:
