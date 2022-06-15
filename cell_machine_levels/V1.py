@@ -30,8 +30,8 @@ def open(level_code: str) -> Level:
             level[int(x), int(y)] = Cell(int(type), int(rotation))
 
         return level
-    else:
-        raise LevelParsingError("Invalid V1 level code.")
+
+    raise LevelParsingError("Invalid V1 level code.")
 
 
 def save(level: Level) -> str:

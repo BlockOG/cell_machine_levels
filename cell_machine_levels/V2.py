@@ -36,10 +36,15 @@ def open(level_code: str) -> Level:
 
             for i in range(repeat):
                 cell_num = b74_decode(level_list[3][count + i])
-                level[(count + i) % level.width, (count + i) // level.height] = (
-                    Cell(cell_num // 2 % 9, cell_num // 18 % 4),
-                    cell_num % 2 == 1,
-                )
+                if cell_num > 71:
+                    level[(count + i) % level.width, (count + i) // level.height] = (
+                        cell_num % 2 == 1
+                    )
+                else:
+                    level[(count + i) % level.width, (count + i) // level.height] = (
+                        Cell(cell_num // 2 % 9, cell_num // 18 % 4),
+                        cell_num % 2 == 1,
+                    )
 
             count += repeat
 
