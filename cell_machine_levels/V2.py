@@ -65,7 +65,7 @@ def save(level: Level) -> str:
         if cell.type == CellEnum.bg:
             level_string += b74_encode(72 + int(place))
         else:
-            level_string += b74_encode(cell.type * 2 * (cell.rotation + 1) + int(place))
+            level_string += b74_encode(cell.type * 2 + cell.rotation * 18 + int(place))
 
     # Remove the space using bgs at the end
     regex1 = r"\{{1,4}$"
