@@ -1,20 +1,31 @@
 """The level parser for V2 levels."""
 
 import re
-from .level import CellEnum, Level, LevelParsingError, Cell
+from typing import Tuple
+from .level import Level, Cell, CellEnum
+from .level import LevelParsingError, LevelTooBigError
 from .base74 import b74_decode, b74_encode
 
 
-def open(level_code: str) -> Level:
+def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
     """Use level.open, that's how to open a level."""
     if re.match(
         r"^V2;[\da-zA-Z!$%&+-.=?^{}]+;[\da-zA-Z!$%&+-.=?^{}]+;[\da-zA-Z!$%&+-.=?^{}()]*;[\w\d]*;[\w\d]*;[0-3]?$",
         level_code,
     ):
         level_list = level_code.split(";")
+
+        width, height = b74_decode(level_list[1]), b74_decode(level_list[2])
+
+        if max_size[0] > 0 or max_size[1] > 0:
+            if width > max_size[0] or height > max_size[1]:
+                raise LevelTooBigError(
+                    f"Level is too big. Max size is {max_size[0]}x{max_size[1]}."
+                )
+
         level = Level(
-            b74_decode(level_list[1]),
-            b74_decode(level_list[2]),
+            width,
+            height,
             level_list[4],
             level_list[5],
             int(level_list[6]) if level_list[6] != "" else 0,
@@ -37,11 +48,11 @@ def open(level_code: str) -> Level:
             for i in range(repeat):
                 cell_num = b74_decode(level_list[3][count + i])
                 if cell_num > 71:
-                    level[(count + i) % level.width, (count + i) // level.height] = (
+                    level[(count + i) % width, (count + i) // height] = (
                         cell_num % 2 == 1
                     )
                 else:
-                    level[(count + i) % level.width, (count + i) // level.height] = (
+                    level[(count + i) % width, (count + i) // height] = (
                         Cell(cell_num // 2 % 9, cell_num // 18 % 4),
                         cell_num % 2 == 1,
                     )

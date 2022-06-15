@@ -259,23 +259,36 @@ class Level:
         raise TypeError(f"Cannot compare Level with {type(other)}")
 
 
-class LevelParsingError(Exception):
-    """Exception raised when parsing a level fails."""
-
-
-def open(level_code: str) -> Level:
+def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
     """Open a level from a level code.
 
     Args:
         level_code (str): The level code.
+        max_size (Tuple[int, int]): The maximum size of the level.
 
     Returns:
-        Level: The level."""
+        Level: The level.
+
+    Raises:
+        LevelParseError: If the level code is invalid.
+        LevelTooBigError: If the level is bigger than the given max size."""
     for plugin in _plugins:
         if level_code.startswith(plugin + ";"):
             return importlib.import_module(f".{plugin}", "cell_machine_levels").open(
-                level_code
+                level_code,
+                max_size,
             )
     raise LevelParsingError(
         f"The format {level_code.split(';')[0]} is not supported or doesn't exist."
     )
+
+
+# Exceptions
+
+
+class LevelParsingError(Exception):
+    """Exception raised when parsing a level fails."""
+
+
+class LevelTooBigError(Exception):
+    """Exception raised when a level is bigger than the given max size."""

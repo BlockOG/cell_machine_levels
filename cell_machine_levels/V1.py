@@ -1,19 +1,30 @@
 """The level parser for V1 levels."""
 
 import re
-from .level import Level, LevelParsingError, Cell, CellEnum
+from typing import Tuple
+from .level import Level, Cell, CellEnum
+from .level import LevelParsingError, LevelTooBigError
 
 
-def open(level_code: str) -> Level:
+def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
     """Use level.open, that's how to open a level."""
     if re.match(
         r"^V1;\d+;\d+;(\d\.\d,?)*;([0-8]\.[0-3]\.\d+\.\d+,?)*;[\w\d]*;[0-3]?$",
         level_code,
     ):
         level_list = level_code.split(";")
+
+        width, height = int(level_list[1]), int(level_list[2])
+
+        if max_size[0] > 0 or max_size[1] > 0:
+            if width > max_size[0] or height > max_size[1]:
+                raise LevelTooBigError(
+                    f"Level is too big. Max size is {max_size[0]}x{max_size[1]}."
+                )
+
         level = Level(
-            int(level_list[1]),
-            int(level_list[2]),
+            width,
+            height,
             "",
             level_list[5],
             int(level_list[6]) if level_list[6] != "" else 0,
