@@ -1,5 +1,9 @@
 """The level parser for V1 levels."""
 
+<<<<<<< HEAD
+=======
+from .level import CellEnum, Level, LevelParsingError, Cell
+>>>>>>> waity5
 import re
 from .level import Level, LevelParsingError, Cell
 
@@ -14,6 +18,7 @@ def open(level_code: str) -> Level:
         level = Level(
             int(level_list[1]),
             int(level_list[2]),
+            "",
             level_list[5],
             int(level_list[6]) if level_list[6] != "" else 0,
         )
@@ -42,7 +47,7 @@ def save(level: Level) -> str:
         if place:
             placeable.append(f"{x}.{y}")
 
-        if cell.type != 0:
+        if cell.type != CellEnum.bg:
             cells.append(f"{int(cell.type)}.{int(cell.rotation)}.{x}.{y}")
 
     return f"V1;{level.width};{level.height};{';'.join(placeable)};{';'.join(cells)};{level.name};{int(level.wall_effect)}"

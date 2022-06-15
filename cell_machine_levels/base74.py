@@ -18,14 +18,18 @@ def b74_decode(chars: str, /) -> int:
         result *= 74
         if (b74_char := b74_key.find(char)) == -1:
             raise ValueError(f"Invalid character in base 74 number: {char}")
+<<<<<<< HEAD
         else:
             result = result + b74_char
+=======
+        result = result + c
+>>>>>>> waity5
 
     return result
 
 
 def b74_encode(num: int, /) -> str:
-    """Encode regular integer to base 74 number.
+    """Encode regular positive integer to base 74 number.
 
     Args:
         num (integer): The number to encode.
@@ -33,14 +37,14 @@ def b74_encode(num: int, /) -> str:
     Returns:
         string: The base 74 number.
     """
-    if num == 0:
-        return "0"
+    if num < 10:
+        return str(num)
 
     result = ""
     counter = 0
 
     while num >= (74**counter):
-        result = b74_key[num // (74**counter) % 74] + result
+        result += b74_key[num // (74**counter) % 74]
         counter += 1
 
     return result
