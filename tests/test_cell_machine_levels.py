@@ -12,9 +12,7 @@ class TestLevel(unittest.TestCase):
         self.assertEqual(
             test, cell_machine_levels.level.open("V1;10;10;0.0;3.3.1.0;test;2")
         )
-        self.assertEqual(
-            test, cell_machine_levels.level.open("V2;a;a;}Y;;test;2")
-        )
+        self.assertEqual(test, cell_machine_levels.level.open("V2;a;a;}Y;;test;2"))
 
     def test_save(self):
         test = cell_machine_levels.level.Level(10, 10, "", "test", 2)

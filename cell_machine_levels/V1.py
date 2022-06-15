@@ -1,11 +1,7 @@
 """The level parser for V1 levels."""
 
-<<<<<<< HEAD
-=======
-from .level import CellEnum, Level, LevelParsingError, Cell
->>>>>>> waity5
 import re
-from .level import Level, LevelParsingError, Cell
+from .level import Level, LevelParsingError, Cell, CellEnum
 
 
 def open(level_code: str) -> Level:
