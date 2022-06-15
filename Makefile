@@ -1,7 +1,7 @@
 format:
 	python3 -m black .
 test:
-	python3 -m unittest tests/__main__.py
+	python3 -m unittest tests/test_cell_machine_levels.py
 build:
 	make format
 	make test

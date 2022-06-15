@@ -1,7 +1,9 @@
-from enum import IntEnum
-from . import _plugins
-from typing import Tuple, Union
+"""This module contains the level class and the cell class."""
+
 import importlib
+from enum import IntEnum
+from typing import Tuple, Union
+from . import _plugins
 
 
 class CellEnum(IntEnum):
@@ -20,7 +22,7 @@ class CellEnum(IntEnum):
     bg = 9
 
 
-class Rotations(IntEnum):
+class Rotation(IntEnum):
     """The enum used for rotations in the Cell class."""
 
     right = 0
@@ -39,14 +41,20 @@ class WallEffect(IntEnum):
 
 
 class Cell:
-    def __init__(self, type: CellEnum = 0, rotation: Rotations = 0) -> None:
+    """The class used for cells in the Level class."""
+
+    def __init__(
+        self, type: CellEnum = CellEnum.bg, rotation: Rotation = Rotation.right
+    ) -> None:
         self.type = type
-        self.rotation = rotation
+        self._rotation = rotation if type != CellEnum.bg else Rotation.right
 
     def rotate_left(self) -> None:
+        """Rotate the cell left."""
         self.rotation = (self.rotation - 1) % 4
 
     def rotate_right(self) -> None:
+        """Rotate the cell right."""
         self.rotation = (self.rotation + 1) % 4
 
     def __str__(self) -> str:
@@ -54,34 +62,65 @@ class Cell:
 
     __repr__ = __str__
 
+    @property
+    def rotation(self) -> Rotation:
+        """Get the rotation of the cell.
+
+        Returns:
+            Rotation: The rotation of the cell."""
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, value: Rotation) -> None:
+        """Set the rotation of the cell.
+
+        Args:
+            value (Rotation): The rotation to set the cell to."""
+        if self.type != CellEnum.bg:
+            self._rotation = value % 4
+
     # Comparisons
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, Cell):
             return self.type == other.type and self.rotation == other.rotation
-        elif isinstance(other, int):
+        if isinstance(other, int):
             return self.type == other
-        elif isinstance(other, tuple) or isinstance(other, list):
-            return self.type == other[0] and self.rotation == other[1]
-        elif isinstance(other, str):
+        if isinstance(other, (tuple, list)):
+            if len(other) == 2:
+                return self.type == other[0] and self.rotation == other[1]
+            raise TypeError(
+                f"Cannot compare Cell to {type(other)} with length {len(other)}."
+            )
+        if isinstance(other, str):
             return str(self) == other
-        else:
-            raise TypeError(f"Cannot compare Cell to {type(other)}")
+        raise TypeError(f"Cannot compare Cell to {type(other)}.")
 
 
 class Level:
-    """The main class for levels. You can use this class to create levels and to parse level codes."""
+    """The main class for levels. You can use this class to create levels
+    and to parse level codes."""
 
     def __init__(
-        self, width: int, height: int, name: str = "", wall_effect: WallEffect = 0
+        self,
+        width: int,
+        height: int,
+        tutorial_text: str = "",
+        name: str = "",
+        wall_effect: WallEffect = 0,
     ) -> None:
         self._size = (width, height)
         self.cell_grid = [[Cell() for _ in range(width)] for _ in range(height)]
         self.place_grid = [[False for _ in range(width)] for _ in range(height)]
+        self.tutorial_text = tutorial_text
         self.name = name
         self.wall_effect = wall_effect
+        self._pos = None  # Cause pylint is complaining
 
     def optimized(self) -> "Level":
+        """Optimize the level.
+        Returns:
+            Level: The optimized level."""
         result = Level(self.width, self.height, self.name, self.wall_effect)
 
         for x, y, cell, place in self:
@@ -104,17 +143,32 @@ class Level:
         return result
 
     def optimize(self) -> None:
-        self = self.optimized()
+        """Optimize this level without returning anything."""
+        self.cell_grid = self.optimized().cell_grid
+
+    def __str__(self) -> str:
+        output = [[] for _ in range(self.height)]
+
+        for _, y, cell, place in self:
+            output[y].append(f"{cell},{place}")
+
+        return str(output)
+
+    __repr__ = __str__
 
     # Saving the level
 
     def save(self, format: str) -> str:
+        """Save the level to a level code of the given format.
+        Args:
+            format (str): The format to save the level in.
+        Returns:
+            str: The level code."""
         if format in _plugins:
             return importlib.import_module(f".{format}", "cell_machine_levels").save(
                 self
             )
-        else:
-            raise ValueError(f"The format {format} is not supported or doesn't exist.")
+        raise ValueError(f"The format {format} is not supported or doesn't exist.")
 
     # Iterable methods
 
@@ -134,35 +188,48 @@ class Level:
             if self._pos[0] >= self.width:
                 self._pos = [0, self._pos[1] + 1]
             return ret
-        else:
-            raise StopIteration
+        raise StopIteration
 
     # Getters and setters
 
     def __getitem__(self, pos: Tuple[int, int, bool]) -> Union[Cell, bool]:
         if pos[2]:
             return self.place_grid[pos[1]][pos[0]]
-        else:
-            return self.cell_grid[pos[1]][pos[0]]
+        return self.cell_grid[pos[1]][pos[0]]
 
-    def __setitem__(self, pos: Tuple[int, int], value: Union[Cell, bool]) -> None:
+    def __setitem__(
+        self, pos: Tuple[int, int], value: Union[Cell, bool, Tuple[Cell, bool]]
+    ) -> None:
         if isinstance(value, bool):
             self.place_grid[pos[1]][pos[0]] = value
-        else:
+        elif isinstance(value, Cell):
             self.cell_grid[pos[1]][pos[0]] = value
+        elif isinstance(value, tuple):
+            if len(value) == 2:
+                self.cell_grid[pos[1]][pos[0]] = value[0]
+                self.place_grid[pos[1]][pos[0]] = value[1]
+            else:
+                raise ValueError(
+                    f"Value has to be a tuple of length 2 being (Cell, bool), not {len(value)}"
+                )
+        else:
+            raise ValueError(f"Invalid value type {type(value)}")
 
     # Getting size
 
     @property
     def size(self):
+        """Tuple[int, int]: The size of the level."""
         return self._size
 
     @property
     def width(self):
+        """int: The width of the level."""
         return self._size[0]
 
     @property
     def height(self):
+        """int: The height of the level."""
         return self._size[1]
 
     # Comparisons
@@ -172,27 +239,33 @@ class Level:
             return (
                 self.cell_grid == other.cell_grid
                 and self.place_grid == other.place_grid
+                and self.tutorial_text == other.tutorial_text
                 and self.name == other.name
                 and self.wall_effect == other.wall_effect
             )
-        elif isinstance(other, str):
+        if isinstance(other, str):
             try:
                 return self.save(other.split(";")[0]) == other
-            except ValueError:
+            except ValueError as ex:
+                form = other.split(";")[0]
                 raise ValueError(
-                    f"The format {f[:10] + '...' if len(f := other.split(';')[0]) > 10 else f} is not supported or doesn't exist."
-                )
-        elif isinstance(other, list):
+                    f"The format {form[:10] + '...' if len(form) > 10 else form} is not supported or doesn't exist."
+                ) from ex
+        if isinstance(other, list):
             return self.cell_grid == other
-        else:
-            raise TypeError(f"Cannot compare Level with {type(other)}")
+        raise TypeError(f"Cannot compare Level with {type(other)}")
 
 
 class LevelParsingError(Exception):
-    pass
+    """Exception raised when parsing a level fails."""
 
 
 def open(level_code: str) -> Level:
+    """Open a level from a level code.
+    Args:
+        level_code (str): The level code.
+    Returns:
+        Level: The level."""
     for plugin in _plugins:
         if level_code.startswith(plugin + ";"):
             return importlib.import_module(f".{plugin}", "cell_machine_levels").open(
