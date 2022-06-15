@@ -12,7 +12,7 @@ Or just `pip` on some OSes
 
 ## Level class
 
-Currently supports only V1, support is going to be added for much more than just V1
+Currently supports only V1 and V2, support is going to be added for much more than just these
 
 Level creation example:
 
