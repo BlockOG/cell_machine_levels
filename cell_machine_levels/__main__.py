@@ -7,10 +7,12 @@ choices = [
         [
             exit,
             lambda: 1,
+            lambda: 2,
         ],
         [
             "Exit",
             "Base 74 Encoding",
+            "Level Stuff",
         ],
     ],
     [
@@ -25,6 +27,21 @@ choices = [
             "Go Back",
             "Encode",
             "Decode",
+        ],
+    ],
+    [
+        [
+            lambda: 0,
+            lambda: print(
+                cell_machine_levels.level.open(
+                    input("Input level code (V1 or V2): ")
+                ).save(input("Format to output in (V1 or V2): "))
+            )
+            or 2,
+        ],
+        [
+            "Go Back",
+            "Optimize Level (only good for V2 and V3 (not yet))",
         ],
     ],
 ]
