@@ -67,16 +67,30 @@ def save(level: Level) -> str:
         else:
             level_string += b74_encode(cell.type * 2 + cell.rotation * 18 + int(place))
 
-    # Remove the space using bgs at the end
-    regex1 = r"\{{1,4}$"
-    regex2 = r"\{\)0[\da-zA-Z!$%&+-.=?^{}]$"
-    regex3 = r"\{\(0\([\da-zA-Z!$%&+-.=?^{}]+\)$"
+    # Remove the space using bgs at the end of the level
+    level_string = re.sub(r"\{+$", "", level_string, 0)
 
-    if re.search(regex1, level_string):
-        level_string = re.sub(regex1, "", level_string, 0)
-    elif re.search(regex2, level_string):
-        level_string = re.sub(regex2, "", level_string, 0)
-    elif re.search(regex3, level_string):
-        level_string = re.sub(regex3, "", level_string, 0)
+    result_level_string = ""
+    repeat = 0
+    previous = ""
+    for i in level_string:
+        if i == previous:
+            repeat += 1
+        else:
+            if repeat < 4:
+                result_level_string += previous * repeat
+            elif repeat < 74:
+                result_level_string += previous + ")" + b74_encode(repeat)
+            else:
+                result_level_string += previous + "(" + b74_encode(repeat) + ")"
+            repeat = 1
+            previous = i
 
-    return f"V2;{b74_encode(level.width)};{b74_encode(level.height)};{level_string};{level.tutorial_text};{level.name};{int(level.wall_effect)}"
+    if repeat < 4:
+        result_level_string += previous * repeat
+    elif repeat < 74:
+        result_level_string += previous + ")" + b74_encode(repeat)
+    else:
+        result_level_string += previous + "(" + b74_encode(repeat) + ")"
+
+    return f"V2;{b74_encode(level.width)};{b74_encode(level.height)};{result_level_string};{level.tutorial_text};{level.name};{int(level.wall_effect)}"
