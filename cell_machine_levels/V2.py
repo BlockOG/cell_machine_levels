@@ -79,11 +79,9 @@ def save(level: Level) -> str:
     repeat = 0
     previous = ""
     for i in level_string:
-        if i == previous:
-            repeat += 1
-        else:
+        if i != previous:
             if repeat < 4:
-                result_level_string += previous * repeat
+                result_level_string += previous * (repeat - 1)
             elif repeat < 74:
                 result_level_string += previous + ")" + b74_encode(repeat)
             else:
@@ -91,8 +89,10 @@ def save(level: Level) -> str:
             repeat = 1
             previous = i
 
+        repeat += 1
+
     if repeat < 4:
-        result_level_string += previous * repeat
+        result_level_string += previous * (repeat - 1)
     elif repeat < 74:
         result_level_string += previous + ")" + b74_encode(repeat)
     else:
