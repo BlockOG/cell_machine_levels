@@ -79,23 +79,23 @@ def save(level: Level) -> str:
     repeat = 0
     previous = ""
     for i in level_string:
-        if i != previous:
+        if i == previous:
+            repeat += 1
+        else:
             if repeat < 4:
-                result_level_string += previous * (repeat - 1)
+                result_level_string += previous * repeat
             elif repeat < 74:
-                result_level_string += previous + ")" + b74_encode(repeat)
+                result_level_string += previous + ")" + b74_encode(repeat - 1)
             else:
-                result_level_string += previous + "(" + b74_encode(repeat) + ")"
+                result_level_string += previous + "(" + b74_encode(repeat - 1) + ")"
             repeat = 1
             previous = i
 
-        repeat += 1
-
     if repeat < 4:
-        result_level_string += previous * (repeat - 1)
+        result_level_string += previous * repeat
     elif repeat < 74:
-        result_level_string += previous + ")" + b74_encode(repeat)
+        result_level_string += previous + ")" + b74_encode(repeat - 1)
     else:
-        result_level_string += previous + "(" + b74_encode(repeat) + ")"
+        result_level_string += previous + "(" + b74_encode(repeat - 1) + ")"
 
     return f"V2;{b74_encode(level.width)};{b74_encode(level.height)};{result_level_string};{level.tutorial_text};{level.name};{int(level.wall_effect)}"
