@@ -43,13 +43,9 @@ class WallEffect(IntEnum):
 class Cell:
     """The class used for cells in the Level class."""
 
-<<<<<<< HEAD
-    def __init__(self, type: CellEnum = 0, rotation: Rotations = 0) -> None:
-=======
     def __init__(
         self, type: CellEnum = CellEnum.bg, rotation: Rotation = Rotation.right
     ) -> None:
->>>>>>> waity5
         self.type = type
         self._rotation = rotation if type != CellEnum.bg else Rotation.right
 
@@ -123,10 +119,7 @@ class Level:
 
     def optimized(self) -> "Level":
         """Optimize the level.
-<<<<<<< HEAD
 
-=======
->>>>>>> waity5
         Returns:
             Level: The optimized level."""
         result = Level(self.width, self.height, self.name, self.wall_effect)
@@ -153,8 +146,6 @@ class Level:
     def optimize(self) -> None:
         """Optimize this level without returning anything."""
         self.cell_grid = self.optimized().cell_grid
-<<<<<<< HEAD
-=======
 
     def __str__(self) -> str:
         output = [[] for _ in range(self.height)]
@@ -165,21 +156,15 @@ class Level:
         return str(output)
 
     __repr__ = __str__
->>>>>>> waity5
 
     # Saving the level
 
     def save(self, format: str) -> str:
         """Save the level to a level code of the given format.
-<<<<<<< HEAD
 
         Args:
             format (str): The format to save the level in.
 
-=======
-        Args:
-            format (str): The format to save the level in.
->>>>>>> waity5
         Returns:
             str: The level code."""
         if format in _plugins:
@@ -269,11 +254,7 @@ class Level:
                 raise ValueError(
                     f"The format {form[:10] + '...' if len(form) > 10 else form} is not supported or doesn't exist."
                 ) from ex
-<<<<<<< HEAD
-        elif isinstance(other, list):
-=======
         if isinstance(other, list):
->>>>>>> waity5
             return self.cell_grid == other
         raise TypeError(f"Cannot compare Level with {type(other)}")
 
@@ -284,15 +265,10 @@ class LevelParsingError(Exception):
 
 def open(level_code: str) -> Level:
     """Open a level from a level code.
-<<<<<<< HEAD
 
     Args:
         level_code (str): The level code.
 
-=======
-    Args:
-        level_code (str): The level code.
->>>>>>> waity5
     Returns:
         Level: The level."""
     for plugin in _plugins:

@@ -18,12 +18,8 @@ def b74_decode(chars: str, /) -> int:
         result *= 74
         if (b74_char := b74_key.find(char)) == -1:
             raise ValueError(f"Invalid character in base 74 number: {char}")
-<<<<<<< HEAD
         else:
             result = result + b74_char
-=======
-        result = result + c
->>>>>>> waity5
 
     return result
 
