@@ -1,3 +1,5 @@
+"""This module is used in V2 and V3 encoding, maybe some others too."""
+
 b74_key = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&+-.=?^{}"
 
 
