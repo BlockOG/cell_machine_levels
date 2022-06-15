@@ -45,4 +45,4 @@ def save(level: Level) -> str:
         if cell.type != 0:
             cells.append(f"{int(cell.type)}.{int(cell.rotation)}.{x}.{y}")
 
-    return f"V1;{level.width};{level.height};{';'.join(placeable)};{';'.join(cells)};{level.name};{int(level.wall_effect)}"
+    return f"V1;{level.width};{level.height};{','.join(placeable)};{','.join(cells)};{level.name};{int(level.wall_effect)}"
