@@ -13,6 +13,7 @@ class TestLevel(unittest.TestCase):
             test, cell_machine_levels.level.open("V1;10;10;0.0;3.3.0.1;test;2")
         )
         self.assertEqual(test, cell_machine_levels.level.open("V2;a;a;}{)8Y;;test;2"))
+        self.assertEqual(test, cell_machine_levels.level.open("V2;a;a;}{(8)Y;;test;2"))
 
     def test_save(self):
         test = cell_machine_levels.level.Level(10, 10, "", "test", 2)
@@ -23,6 +24,7 @@ class TestLevel(unittest.TestCase):
         )
         self.assertEqual(test.save("V1"), "V1;10;10;0.0;3.3.0.1;test;2")
         self.assertEqual(test.save("V2"), "V2;a;a;}{)8Y;;test;2")
+        self.assertNotEqual(test.save("V2"), "V2;a;a;}{(8)Y;;test;2")
 
 
 if __name__ == "__main__":
