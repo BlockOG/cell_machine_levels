@@ -42,8 +42,8 @@ def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
                 repeat = b74_decode(level_list[3][count + 2]) + 1
                 count_add = 3
             elif level_list[3][count + 1] == "(":
-                repeat = b74_decode(level_list[3][count + 2:].split(")")[0]) + 1
-                count_add = 3 + len(level_list[3][count + 2:].split(")")[0])
+                repeat = b74_decode(level_list[3][count + 2 :].split(")")[0]) + 1
+                count_add = 3 + len(level_list[3][count + 2 :].split(")")[0])
             else:
                 repeat = 1
                 count_add = 1
@@ -51,9 +51,7 @@ def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
             cell_num = b74_decode(level_list[3][count])
             for i in range(repeat):
                 if cell_num > 71:
-                    level[(pos + i) % width, (pos + i) // height] = (
-                        cell_num % 2 == 1
-                    )
+                    level[(pos + i) % width, (pos + i) // height] = cell_num % 2 == 1
                 else:
                     level[(pos + i) % width, (pos + i) // height] = (
                         Cell(cell_num // 2 % 9, cell_num // 18 % 4),
