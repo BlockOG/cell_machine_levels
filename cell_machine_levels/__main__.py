@@ -33,7 +33,9 @@ choices = [
         [
             lambda: 0,
             lambda: print(
-                cell_machine_levels.level.open(input("Input level code (V1, V2 or V3): "))
+                cell_machine_levels.level.open(
+                    input("Input level code (V1, V2 or V3): ")
+                )
                 .optimized()
                 .save(input("Format to output in (V1, V2 or V3): "))
             )

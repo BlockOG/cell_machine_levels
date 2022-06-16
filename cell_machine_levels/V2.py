@@ -34,7 +34,7 @@ def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
         if level_list[3] == "":
             return level
 
-        level_list[3] += "0" # To not error when checking for ) or (
+        level_list[3] += "0"  # To not error when checking for ) or (
 
         count = pos = 0
         while count < len(level_list[3]) - 1:
