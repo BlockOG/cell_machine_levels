@@ -1,5 +1,6 @@
 """This module contains the level class and the cell class."""
 
+import copy
 import importlib
 from enum import IntEnum
 from typing import Tuple, Union
@@ -122,8 +123,12 @@ class Level:
 
         Returns:
             Level: The optimized level."""
-        result = Level(self.width, self.height, self.name, self.wall_effect)
+        result = self.clone()
+        result.optimize()
+        return result
 
+    def optimize(self) -> None:
+        """Optimize this level without returning anything."""
         for x, y, cell, place in self:
             if cell.type in (
                 CellEnum.enemy,
@@ -133,19 +138,92 @@ class Level:
                 CellEnum.spinner_left,
                 CellEnum.spinner_right,
             ):
-                result[x, y] = Cell(cell.type, 0)
+                self[x, y] = Cell(cell.type, 0)
             elif cell.type == CellEnum.slide:
-                result[x, y] = Cell(cell.type, cell.rotation % 2)
+                self[x, y] = Cell(cell.type, cell.rotation % 2)
             else:
-                result[x, y] = cell
+                self[x, y] = cell
 
-            result[x, y] = place
+            self[x, y] = place
 
+    def resized(
+        self, add_left: int, add_right: int, add_top: int, add_bottom: int
+    ) -> "Level":
+        """Resize the level.
+
+        Args:
+            add_left (int): The amount of cells to add to the left.
+            add_right (int): The amount of cells to add to the right.
+            add_top (int): The amount of cells to add to the top.
+            add_bottom (int): The amount of cells to add to the bottom.
+
+        Returns:
+            Level: The resized level.
+
+        Raises:
+            ValueError: If any of the arguments are negative.
+        """
+        result = self.clone()
+        result.resize(add_left, add_right, add_top, add_bottom)
         return result
 
-    def optimize(self) -> None:
-        """Optimize this level without returning anything."""
-        self.cell_grid = self.optimized().cell_grid
+    def resize(
+        self, add_left: int, add_right: int, add_top: int, add_bottom: int
+    ) -> None:
+        """Resize the level without returning anything.
+
+        Args:
+            add_left (int): The amount of cells to add to the left.
+            add_right (int): The amount of cells to add to the right.
+            add_top (int): The amount of cells to add to the top.
+            add_bottom (int): The amount of cells to add to the bottom.
+
+        Raises:
+            ValueError: If any of the arguments are negative.
+        """
+        if add_left < 0 or add_right < 0 or add_top < 0 or add_bottom < 0:
+            raise ValueError("Cannot resize by a negative amount.")
+
+        self._size = (
+            self.width + add_left + add_right,
+            self.height + add_top + add_bottom,
+        )
+
+        for i in range(len(self.cell_grid, self.place_grid)):
+            self.cell_grid[i] = (
+                [Cell() for _ in range(add_left)]
+                + self.cell_grid[i]
+                + [Cell() for _ in range(add_right)]
+            )
+            self.place_grid[i] = (
+                [False for _ in range(add_left)]
+                + self.place_grid[i]
+                + [False for _ in range(add_right)]
+            )
+
+        self.cell_grid = (
+            [[Cell() for _ in range(self.width)] for _ in range(add_bottom)]
+            + self.cell_grid
+            + [[Cell() for _ in range(self.width)] for _ in range(add_top)]
+        )
+        self.place_grid = (
+            [[False for _ in range(self.width)] for _ in range(add_bottom)]
+            + self.place_grid
+            + [[False for _ in range(self.width)] for _ in range(add_top)]
+        )
+
+    def clone(self) -> "Level":
+        """Clone this level.
+
+        Returns:
+            Level: The cloned level.
+        """
+        output = Level(
+            self.width, self.height, self.tutorial_text, self.name, self.wall_effect
+        )
+        output.cell_grid = copy.deepcopy(self.cell_grid)
+        output.place_grid = copy.deepcopy(self.place_grid)
+        return output
 
     def __str__(self) -> str:
         output = [[] for _ in range(self.height)]
