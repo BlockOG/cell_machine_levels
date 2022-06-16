@@ -33,6 +33,12 @@ choices = [
         [
             lambda: 0,
             lambda: print(
+                cell_machine_levels.level.open(input("Input level code (V1 or V2): "))
+                .optimized()
+                .save(input("Format to output in (V1 or V2): "))
+            )
+            or 2,
+            lambda: print(
                 cell_machine_levels.level.open(
                     input("Input level code (V1 or V2): ")
                 ).save(input("Format to output in (V1 or V2): "))
@@ -42,6 +48,7 @@ choices = [
         [
             "Go Back",
             "Optimize Level (only good for V2 and V3 (not yet))",
+            "Convert Level",
         ],
     ],
 ]
