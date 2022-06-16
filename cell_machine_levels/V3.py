@@ -1,4 +1,4 @@
-"""The level parser for V2 levels."""
+"""The level parser for V3 levels."""
 
 import re
 from typing import Tuple
@@ -63,7 +63,7 @@ def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
 
         return level
 
-    raise LevelParsingError("Invalid V2 level code.")
+    raise LevelParsingError("Invalid V3 level code.")
 
 
 def save(level: Level) -> str:
@@ -111,4 +111,4 @@ def save(level: Level) -> str:
     else:
         result_level_string += previous + "(" + b74_encode(repeat - 1) + ")"
 
-    return f"V2;{b74_encode(level.width)};{b74_encode(level.height)};{result_level_string};{level.tutorial_text};{level.name};{int(level.wall_effect)}"
+    return f"V3;{b74_encode(level.width)};{b74_encode(level.height)};{result_level_string};{level.tutorial_text};{level.name};{int(level.wall_effect)}"
