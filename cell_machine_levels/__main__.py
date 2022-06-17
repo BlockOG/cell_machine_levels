@@ -1,6 +1,7 @@
 """CLI for cell_machine_levels."""
 
 import cell_machine_levels
+from BlockOL import teef
 
 get_level_code = lambda: input("Input level code (V1, V2 or V3): ")
 get_level = lambda: cell_machine_levels.level.open(get_level_code())
@@ -23,10 +24,24 @@ menus = [
     [
         [
             lambda: 0,
-            lambda: print(cell_machine_levels.base74.b74_encode(int(input("Number: "))))
-            or 1,
-            lambda: print(cell_machine_levels.base74.b74_decode(input("Base 74: ")))
-            or 1,
+            lambda: teef(
+                lambda a: a.__setitem__("a", int(input("Number: "))),
+                ValueError,
+                lambda _, __: print("Invalid number"),
+                lambda a: print(
+                    "Base 74:", cell_machine_levels.base74.b74_encode(a["a"])
+                ),
+                lambda _: 1,
+            )[0][3],
+            lambda: teef(
+                lambda a: a.__setitem__(
+                    "a", cell_machine_levels.base74.b74_decode(input("Base 74: "))
+                ),
+                ValueError,
+                lambda _, __: print("Invalid base 74"),
+                lambda a: print("Number:", a["a"]),
+                lambda _: 1,
+            )[0][3],
         ],
         [
             "Go Back",
