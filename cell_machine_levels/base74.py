@@ -40,7 +40,7 @@ def b74_encode(num: int, /) -> str:
     counter = 0
 
     while num >= (74**counter):
-        result += b74_key[num // (74**counter) % 74]
+        result = b74_key[num // (74**counter) % 74] + result
         counter += 1
 
     return result
