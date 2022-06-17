@@ -60,6 +60,7 @@ menus = [
     ],
 ]
 
+
 def main():
     """Main CLI."""
     current_menu = 0
@@ -77,6 +78,7 @@ def main():
         except (ValueError, IndexError):
             print("Invalid choice")
             continue
+
 
 if __name__ == "__main__":
     main()
