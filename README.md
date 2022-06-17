@@ -1,3 +1,5 @@
+## This library is currently in beta and can have major API changes
+
 # Cell Machine Levels
 
 A library for manipulating modded cell machine level codes.
