@@ -25,8 +25,8 @@ def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
         level = Level(
             width,
             height,
-            "",
             level_list[5],
+            "",
             int(level_list[6]) if level_list[6] != "" else 0,
         )
 
