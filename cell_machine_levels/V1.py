@@ -9,7 +9,7 @@ from .level import LevelParsingError, LevelTooBigError
 def open(level_code: str, max_size: Tuple[int, int] = (0, 0)) -> Level:
     """Use level.open, that's how to open a level."""
     if re.match(
-        r"^V1;\d+;\d+;(\d.\d)?(,\d\.\d)*;([0-8]\.[0-3]\.\d+\.\d+)(,[0-8]\.[0-3]\.\d+\.\d+)*;[\w\d]*;[0-3]?$",
+        r"^V1;\d+;\d+;(\d.\d)?(,\d\.\d)*;([0-8]\.[0-3]\.\d+\.\d+)?(,[0-8]\.[0-3]\.\d+\.\d+)*;[\w\d]*;[0-3]?$",
         level_code,
     ):
         level_list = level_code.split(";")
